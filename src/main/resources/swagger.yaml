@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: Swagger Users - OpenAPI 3.0
+  description: |-
+    Api criada para Realização de um CRUD
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: users
+    description: Operations about user
+paths:
+  /api/signin:
+    post:
+      tags:
+        - users
+      summary: Token access
+      description: Generate Token access
+      operationId: generateToken
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+
+  /api/users:
+    get:
+      tags:
+        - users
+      summary: Get all users.
+      description: retorna todos os usuarios cadastrados
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+    post:
+      tags:
+        - users
+      summary: Create user
+      description: Create a user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /api/users/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by ID
+      description: ''
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          description: 'id of user '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not found
+    delete:
+      tags:
+        - users
+      summary: Delete user by ID
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: Id that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: user deleted
+        '404':
+          description: User not found
+    put:
+      tags:
+        - users
+      summary: Update user by ID
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not found
+
+components:
+  schemas:
+    UserRequest:
+      type: object
+      required:
+        - username
+        - name
+      properties:
+        firstName:
+          type: string
+          example: Joao
+        lastName:
+          type: string
+          example: Jhon
+        email:
+          type: string
+          example: john@email.com
+        birthday:
+          type: string
+          example: 10/10/2020
+        password:
+          type: string
+          example: '12345'
+        phone:
+          type: string
+          example: '12345'
+        cars:
+          items:
+            $ref: '#/components/schemas/Carro'
+          type: array
+          example: '12345'
+
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/UserRequest'
+        - type: object
+
+    Carro:
+      type: object
+      properties:
+        year:
+          type: string
+          example: Ano de fabricação do carro
+        licensePlate:
+          type: string
+          example: Placa do carro
+        model:
+          type: string
+          example: Modelo do carro
+        color:
+          type: string
+          example: john@email.com
+
+
+    TokenRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          example: Login do usuario
+        password:
+          type: string
+          example: Senha do usuario
+    TokenResponse:
+      type: object
+      properties:
+        value:
+          type: string
+          example: token de acesso (verificar)
+
