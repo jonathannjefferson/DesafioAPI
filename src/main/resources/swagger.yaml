@@ -12,6 +12,8 @@ servers:
 tags:
   - name: users
     description: Operations about user
+  - name: cars
+    description: Operations about cars
 paths:
   /api/signin:
     post:
@@ -26,9 +28,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TokenRequest'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/TokenRequest'
       responses:
         200:
           description: successful operation
@@ -36,7 +35,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
-
   /api/users:
     get:
       tags:
@@ -65,9 +63,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserRequest'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/UserRequest'
       responses:
         200:
           description: successful operation
@@ -75,6 +70,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+
   /api/users/{id}:
     get:
       tags:
@@ -102,7 +98,7 @@ paths:
       tags:
         - users
       summary: Delete user by ID
-      operationId: deleteUser
+      operationId: deleteUserById
       parameters:
         - name: id
           in: path
@@ -112,14 +108,14 @@ paths:
             type: string
       responses:
         '200':
-          description: user deleted
+          description: User deleted
         '404':
           description: User not found
     put:
       tags:
         - users
       summary: Update user by ID
-      operationId: updateUser
+      operationId: updateUserById
       parameters:
         - name: id
           in: path
@@ -143,6 +139,116 @@ paths:
         '404':
           description: User not found
 
+  /api/me:
+    get:
+      tags:
+        - cars
+      summary: Return informations about user logged
+      description: Return informations about user logged
+      operationId: userInfoLogged
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLogged'
+  /api/cars:
+    get:
+      tags:
+        - cars
+      summary: Get all cars for user logged.
+      description: Get all cars for user logged.
+      operationId: getAllCarsByUserLogged
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarResponse'
+    post:
+      tags:
+        - cars
+      summary: Register a new car for the logged in user
+      description: Register a new car for the logged in user
+      operationId: registerNewCarForLoggedUser
+      requestBody:
+        description: Created car object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarRequest'
+      responses:
+        200:
+          description: successful operation
+
+  /api/cars/{id}:
+    get:
+      tags:
+        - cars
+      summary: Search for a car from a logged in user by ID
+      description: Search for a car from a logged in user by ID
+      operationId: getCarByUserLogged
+      parameters:
+        - name: id
+          in: path
+          description: 'id of car '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarResponse'
+        '404':
+          description: Car not found
+    delete:
+      tags:
+        - cars
+      summary: Delete car by ID
+      operationId: deleteCarByUserLogged
+      parameters:
+        - name: id
+          in: path
+          description: Id that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Car deleted
+        '404':
+          description: Car not found
+    put:
+      tags:
+        - cars
+      summary: Update car by ID
+      operationId: updateCarByUserLogged
+      parameters:
+        - name: id
+          in: path
+          description: id that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent car
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarRequest'
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: Car not found
+
 components:
   schemas:
     UserRequest:
@@ -163,15 +269,19 @@ components:
         birthday:
           type: string
           example: 10/10/2020
+          format: date
+        login:
+          type: string
+          example: 'joao'
         password:
           type: string
           example: '12345'
         phone:
           type: string
-          example: '12345'
+          example: '99999999999'
         cars:
           items:
-            $ref: '#/components/schemas/Carro'
+            $ref: '#/components/schemas/CarRequest'
           type: array
           example: '12345'
 
@@ -179,12 +289,29 @@ components:
       allOf:
         - $ref: '#/components/schemas/UserRequest'
         - type: object
+      properties:
+        id:
+          type: string
+          example: f0822b54-0720-11ee-be56-0242ac120002
+    UserLogged:
+      allOf:
+        - $ref: '#/components/schemas/UserRequest'
+        - type: object
+      properties:
+        createdAt:
+          type: string
+          description: create date
+          format: date-time
+        lastLogin:
+          type: string
+          description: create date
+          format: date-time
 
-    Carro:
+    CarRequest:
       type: object
       properties:
         year:
-          type: string
+          type: number
           example: Ano de fabricação do carro
         licensePlate:
           type: string
@@ -196,6 +323,9 @@ components:
           type: string
           example: john@email.com
 
+    CarResponse:
+      allOf:
+        - $ref: '#/components/schemas/CarRequest'
 
     TokenRequest:
       type: object
