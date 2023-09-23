@@ -1,4 +1,4 @@
-package DesafioApi.DesafioAPI;
+package DesafioApi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
