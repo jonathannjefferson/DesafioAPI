@@ -1,6 +1,5 @@
 package DesafioApi.domain.model;
 
-import DesafioApi.domain.model.Car;
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.NotBlank;
