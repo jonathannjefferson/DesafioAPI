@@ -1,6 +1,5 @@
 package DesafioApi.config;
 
-import io.jsonwebtoken.Jwts;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
